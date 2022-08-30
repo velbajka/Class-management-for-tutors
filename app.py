@@ -1,6 +1,6 @@
 import datetime
 
-from flask import Flask
+from flask import Flask, request
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -30,13 +30,13 @@ db = SQLAlchemy(app)
 #     def __repr__(self):
 #         return f"{Client.id}, {Client.name}, {Client.last_name}, {Client.phone_number}, {Client.email}"
 #
-# class Address(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     city = db.Column(db.String(45))
-#     postal_code = db.Column(db.String(10))
-#     street = db.Column(db.String(45))
-#     building_number = db.Column(db.Integer)
-#     apartment_number= db.Column(db.Integer)
+class Address(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    city = db.Column(db.String(45))
+    postal_code = db.Column(db.String(10))
+    street = db.Column(db.String(45))
+    building_number = db.Column(db.Integer)
+    apartment_number= db.Column(db.Integer)
 #
 #     client = db.relationship('Client', backref='address', uselist=False)
 #
@@ -148,13 +148,36 @@ def add_client():
 
     pass
 
-@app.route('/add_address')
-def add_address():
-    pass
+@app.route('/add_address/<string:city>/<string:postal_code>/<string:street>/<int:building_number>/<int:apartment_number>')
+def add_address(city, postal_code, street, building_number, apartment_number):
 
-@app.route('/add_meeting_schedule')
-def add_meeting_schedule():
-    pass
+    a = Address(city=city, postal_code=postal_code, street=street, building_number=building_number, apartment_number=apartment_number)
+    # a=Address()
+    db.session.add(a)
+    db.session.commit()
+    return 'address added'
+
+# @app.route('/add_address')
+# def add_address():
+#     request.query_string
+#     request.args['city', 'postal_code', 'street', 'building_number', 'apartment_number']
+#     for p in request.args:
+#         print(p, request.args[p])
+#     city = ''
+#     postal_code = ''
+#     street = ''
+#     building_number = 1
+#     apartment_number = 1
+#     if 'city' in request.args:
+#         city = request.arg['city']
+#     if 'postal_code' in request.args:
+#         postal_code = request.args['postal_code']
+#     a = Address(city=city, postal_code=postal_code, street=street, building_number=building_number, apartment_number=apartment_number)
+#     # a=Address()
+#     db.session.add(a)
+#     db.session.commit()
+#     return 'address added'
+
 
 @app.route('/add_meeting')
 def add_meeting():
@@ -172,4 +195,4 @@ def create_all():
 app.run(port='5001')
 
 
-# INSERT INTO `mynewdb`.`holiday` (`id`, `holiday_type`, `start_date_time`, `end_date_time`) VALUES ('1', 'Wielkanoc', '01.04.2022', '02.04.2022');
+# INSERT INTO `mynewdb`.`holiday` (`id`, `holiday_type`, `start_date_time`, `end_date_time`) VALUES ('1', 'Wielkanoc', '01.04.2022', '02.04.2022')
